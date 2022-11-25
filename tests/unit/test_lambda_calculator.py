@@ -1,4 +1,3 @@
-import json
 from lambda_local.main import call
 from lambda_local.context import Context
 import lambda_calculator.handler as handler
@@ -35,4 +34,37 @@ def test_lambda_handler_event_divided_by(event_divided_by):
     expected_response = ({'statusCode': 200,
                           'headers': {'Content-Type': 'application/json'},
                           'body': '{"Response ": "10 divided-by 5 = 2.0"}'}, None)
+    assert result == expected_response
+
+
+def test_lambda_handler_event_divided_by_zero(event_divided_by_zero):
+    result = call(handler.lambda_handler, event_divided_by_zero, context)
+    expected_response = ({'statusCode': 200,
+                          'headers': {'Content-Type': 'application/json'},
+                          'body': '{"Response ": "I can\'t divide 10 by 0!"}'},
+                         None)
+    assert result == expected_response
+
+
+def test_lambda_handler_event_error_invalid_x(event_error_invalid_x):
+    result = call(handler.lambda_handler, event_error_invalid_x, context)
+    expected_response = ({'statusCode': 400,
+                          'headers': {'Content-Type': 'application/json'},
+                          'body': '{"Response ": [{"loc": ["x"], '
+                                  '"msg": "value is not a valid integer", '
+                                  '"type": "type_error.integer"}]}'}, None)
+    assert result == expected_response
+
+
+def test_lambda_handler_event_error_invalid_action(event_error_invalid_action):
+    result = call(handler.lambda_handler, event_error_invalid_action, context)
+    expected_response = (
+        {'statusCode': 400,
+         'headers': {'Content-Type': 'application/json'},
+         'body': '{"Response ": [{"loc": ["action"], '
+                 '"msg": "value is not a valid enumeration member; '
+                 'permitted: \'plus\', \'minus\', \'times\', \'divided-by\'", '
+                 '"type": "type_error.enum", "ctx": {"enum_values": '
+                 '["plus", "minus", "times", "divided-by"]}}]}'}, None)
+
     assert result == expected_response

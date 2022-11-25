@@ -44,18 +44,20 @@ ACTIONS = {
 
 def lambda_handler(event, context):
     """
-    Accepts an action and two numbers, performs the specified action on the numbers,
+    Accepts an action and two numbers,
+    performs the specified action on the numbers,
     and returns the result.
-    :param event: The event dict that contains the parameters sent when the function
+    :param event: The event dict that
+    contains the parameters sent when the function
                   is invoked.
     :param context: The context in which the function is called.
     :return: The result of the specified action.
     """
-    # Set the log level based on a variable configured in the Lambda environment.
+    # Set the log level based on a variable
+    # configured in the Lambda environment.
     logger.setLevel(os.environ.get("LOG_LEVEL", logging.INFO))
     logger.debug(f"Event: {event}")
     response = None
-    status_code = None
 
     try:
         # Validate Input using Pydantic
@@ -68,7 +70,9 @@ def lambda_handler(event, context):
 
         # If input is OK, execute logic
         try:
-            if func is not None and x is not None and y is not None:
+            if func is not None and \
+                    x is not None and \
+                    y is not None:
                 result = func(x, y)
                 response = f"{x} {action} {y} = {result}"
                 logger.info(response)
@@ -77,11 +81,16 @@ def lambda_handler(event, context):
                 logger.error(f"I can't calculate {x} {action} {y}")
         except ZeroDivisionError:
             logger.warning(f"I can't divide {x} by 0!")
+            response = f"I can't divide {x} by 0!"
 
     except ValidationError as e:
         status_code = HTTPStatus.BAD_REQUEST.value
         logger.error(e.errors())
-        response = e.json()
+        response = json.loads(e.json())
+    except Exception as general_exception:
+        status_code = HTTPStatus.ERROR.value
+        logger.error(general_exception)
+        response = "Internal Server Error Occurred"
 
     return {
         "statusCode": status_code,

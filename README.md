@@ -1,6 +1,6 @@
 # Python Local Lambda Testing Example
 
-[//]: # (This repo contains the sample code for the article - [3 Simple Ways To Define Your Pytest Environment Variables With Examples]&#40;https://pytest-with-eric.com/pytest-best-practices/pytest-environment-variables/&#41;)
+This repo contains the sample code for the article - [Easy And Quick Python Local Lambda Unit Testing for AWS Lambda Functions](https://pytest-with-eric.com/python-local-development/python-local-lambda/)
 
 
 # Requirements
